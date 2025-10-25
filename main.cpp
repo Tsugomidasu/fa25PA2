@@ -68,7 +68,15 @@ void buildFrequencyTable(int freq[], const string& filename) {
     }
     file.close();
 
+    // Debug: Print frequency table
     cout << "Frequency table built successfully.\n";
+    cout << "Character frequencies:\n";
+    for (int i = 0; i < 26; i++) {
+        if (freq[i] > 0) {
+            cout << "'" << char('a' + i) << "': " << freq[i] << "\n";
+        }
+    }
+    cout << "------------------------\n";
 }
 
 // Step 2: Create leaf nodes for each character
