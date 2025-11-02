@@ -66,17 +66,6 @@ void buildFrequencyTable(int freq[], const string& filename) {
         if (ch >= 'a' && ch <= 'z')
             freq[ch - 'a']++;
     }
-    file.close();
-
-    // Debug: Print frequency table
-    cout << "Frequency table built successfully.\n";
-    cout << "Character frequencies:\n";
-    for (int i = 0; i < 26; i++) {
-        if (freq[i] > 0) {
-            cout << "'" << char('a' + i) << "': " << freq[i] << "\n";
-        }
-    }
-    cout << "------------------------\n";
 }
 
 // Step 2: Create leaf nodes for each character
@@ -97,44 +86,62 @@ int createLeafNodes(int freq[]) {
 
 // Step 3: Build the encoding tree using heap operations
 int buildEncodingTree(int nextFree) {
+    // Creates MinHeap and pushes all leaf node indices
+    // Pops two smallest nodes and creates parent with combined weight
+    // Sets left/right pointers and pushes parent back into heap
+    // Returns index of final root node
     MinHeap heap;
 
-    // Push all leaf node indices into the heap
     for (int i = 0; i < nextFree; i++) {
         heap.push(i, weightArr);
     }
 
     int nodeIndex = nextFree;
 
-    // While the heap size is greater than 1
     while (heap.size > 1) {
-        // Pop two smallest nodes
         int leftIdx = heap.pop(weightArr);
         int rightIdx = heap.pop(weightArr);
 
-        // Create a new parent node with combined weight
         weightArr[nodeIndex] = weightArr[leftIdx] + weightArr[rightIdx];
-        leftArr[nodeIndex] = leftIdx; // Set left pointer
-        rightArr[nodeIndex] = rightIdx; // Set right pointer
+        leftArr[nodeIndex] = leftIdx;
+        rightArr[nodeIndex] = rightIdx;
         charArr[nodeIndex] = '\0';
 
-        // Push new parent node back into the heap
         heap.push(nodeIndex, weightArr);
-
         nodeIndex++;
     }
 
-    // Return the index of the last remaining node (root)
     int root = heap.pop(weightArr);
     return root;
 }
 
 // Step 4: Use an STL stack to generate codes
 void generateCodes(int root, string codes[]) {
-    // TODO:
-    // Use stack<pair<int, string>> to simulate DFS traversal.
-    // Left edge adds '0', right edge adds '1'.
-    // Record code when a leaf node is reached.
+    // Uses stack to simulate DFS traversal of encoding tree
+    // Left edges add '0' to code, right edges add '1'
+    // Stores code when reaching leaf nodes with characters
+    stack<pair<int, string>> nodeStack;
+    nodeStack.push({root, ""});
+
+    while (!nodeStack.empty()) {
+        auto current = nodeStack.top();
+        nodeStack.pop();
+        int nodeIdx = current.first;
+        string currentCode = current.second;
+
+        if (charArr[nodeIdx] != '\0') {
+            char ch = charArr[nodeIdx];
+            codes[ch - 'a'] = currentCode;
+        }
+
+        if (rightArr[nodeIdx] != -1) {
+            nodeStack.push({rightArr[nodeIdx], currentCode + "1"});
+        }
+
+        if (leftArr[nodeIdx] != -1) {
+            nodeStack.push({leftArr[nodeIdx], currentCode + "0"});
+        }
+    }
 }
 
 // Step 5: Print table and encoded message
