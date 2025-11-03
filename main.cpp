@@ -66,8 +66,10 @@ void buildFrequencyTable(int freq[], const string& filename) {
         if (ch >= 'a' && ch <= 'z')
             freq[ch - 'a']++;
     }
-}
+    file.close();
 
+    cout << "Frequency table built successfully.\n";
+}
 // Step 2: Create leaf nodes for each character
 int createLeafNodes(int freq[]) {
     int nextFree = 0;
