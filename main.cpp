@@ -134,12 +134,12 @@ void generateCodes(int root, string codes[]) {
             codes[ch - 'a'] = currentCode;
         }
 
-        if (rightArr[nodeIdx] != -1) {
-            nodeStack.push({rightArr[nodeIdx], currentCode + "1"});
-        }
-
         if (leftArr[nodeIdx] != -1) {
             nodeStack.push({leftArr[nodeIdx], currentCode + "0"});
+        }
+
+        if (rightArr[nodeIdx] != -1) {
+            nodeStack.push({rightArr[nodeIdx], currentCode + "1"});
         }
     }
 }
